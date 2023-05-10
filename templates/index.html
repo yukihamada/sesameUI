@@ -49,7 +49,7 @@
         }
 
         async function unlockAutoLock(password) {
-            if (confirm("Please sound the alarm for 1913")) {
+            if (confirm("Please sound the alarm?")) {
                 try {
                     const response = await fetch("/control", {
                         method: "POST",
