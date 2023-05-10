@@ -10,7 +10,8 @@
 
 ## 設定
 
-1. このリポジトリをReplitアカウントにクローンします。
+1. このリポジトリをReplitアカウントにクローンします。または、以下のリンクからフォークしてください。
+   [https://replit.com/@yuki36/SesameUI?v=1](https://replit.com/@yuki36/SesameUI?v=1)
 
 2. Replitプロジェクトで以下の環境変数を設定します。
 
