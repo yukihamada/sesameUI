@@ -9,67 +9,66 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold mb-6">Lock Control</h1>
+        <h1 class="text-4xl font-bold mb-6 text-center">Lock Control</h1>
         <div class="mb-4">
-            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-            <input type="text" class="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="password" placeholder="Enter password">
+            <label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
+            <input type="text" class="form-control mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" id="password" placeholder="パスワードを入力">
         </div>
-       <div class="mb-4">
-            <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" onclick="unlockAutoLock()">Unlock Auto Lock</button>
-        </div>
-       <div class="mb-4">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="sendRequest('open')">Open</button>
-            <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onclick="sendRequest('close')">Close</button>
+       <div class="mb-4 flex justify-center">
+            <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="unlockAutoLock()">玄関オートロック解除</button>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="sendRequest('open')">&#128273;</button>
+            <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mx-2" onclick="sendRequest('close')">&#128274;</button>
         </div>
         <p id="response" class="text-gray-700"></p>
     </div>
     <script>
         async function sendRequest(action) {
+vbnet
+Copy code
+        document.getElementById("response").innerText = "処理中...";
 
-            document.getElementById("response").innerText = "Processing...";
+        try {
+            let response = await fetch("/control", {
+                method: "POST",
+                  body: new URLSearchParams({
+                      action: action,
+                      key: document.getElementById("password").value,
+                    })
+                });
 
+            if (response.ok) {
+                let text = await response.text();
+                document.getElementById("response").innerText = text;
+            } else {
+                throw new Error("無効なリクエスト");
+            }
+        } catch (error) {
+            document.getElementById("response").innerText = error.message;
+        }
+    }
+
+    async function unlockAutoLock(password) {
+        if (confirm("アラームを鳴らしますか？")) {
             try {
-                let response = await fetch("/control", {
+                const response = await fetch("/control", {
                     method: "POST",
-                      body: new URLSearchParams({
-                          action: action,
-                          key: document.getElementById("password").value,
-                        })
-                    });
+                    body: new URLSearchParams({
+                        action: "autounlock",
+                        key: document.getElementById("password").value
+                    })
+                });
 
                 if (response.ok) {
-                    let text = await response.text();
+                    const text = await response.text();
                     document.getElementById("response").innerText = text;
                 } else {
-                    throw new Error("Invalid request");
+                    throw new Error("無効なリクエスト");
                 }
             } catch (error) {
                 document.getElementById("response").innerText = error.message;
             }
         }
-
-        async function unlockAutoLock(password) {
-            if (confirm("Please sound the alarm?")) {
-                try {
-                    const response = await fetch("/control", {
-                        method: "POST",
-                        body: new URLSearchParams({
-                            action: "autounlock",
-                            key: document.getElementById("password").value
-                        })
-                    });
-
-                    if (response.ok) {
-                        const text = await response.text();
-                        document.getElementById("response").innerText = text;
-                    } else {
-                        throw new Error("Invalid request");
-                    }
-                } catch (error) {
-                    document.getElementById("response").innerText = error.message;
-                }
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
